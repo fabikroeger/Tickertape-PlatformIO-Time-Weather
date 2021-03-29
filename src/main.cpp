@@ -25,7 +25,7 @@
 void ResetDevice();
 
 //Defines and constants  (Version might be better as date stting, and used for headers..?)
-#define VERSION "TickerTape v0.7"
+#define VERSION "FabiTape v0.7"
 #define VNUMBER "0.7" 
 #define DEBUG_BUFFER_SIZE 500
 #define LED 5
@@ -47,7 +47,7 @@ LED_Display_Wrapper LEDdisplay = LED_Display_Wrapper();
 
 //Weather API stuff
 char apiKey_default[40]  = "10babfc51dce3f77465a5a398695ea98";
-char apiLocation_default[40] = "London,uk";
+char apiLocation_default[40] = "Berlin,de";
 char weather_payload[700];
 bool weather_busy = 0;
 
@@ -263,7 +263,7 @@ void setup() {
   //if it does not connect it starts an access point with the specified name
   //here  "AutoConnectAP"
   //and goes into a blocking loop awaiting configuration
-  if (!wifiManager.autoConnect("TICKERTAPE", "G42")) {
+  if (!wifiManager.autoConnect("TICKERTAPE","G42")) {
     Serial.println("failed to connect and hit timeout");
     delay(3000);
     //reset and try again, or maybe put it to deep sleep
@@ -350,7 +350,7 @@ void setup() {
   // https://github.com/G6EJD/ESP32-Time-Services-and-SETENV-variable/blob/master/README.md
   // https://www.timeanddate.com/time/zones/
   //
-//            setenv("TZ", "GMT0", 1);
+  setenv("TZ", "CET-1CEST,M3.5.0,M10.5.0/3", 1);
   //
   // You can add additional parameters to the timezone string, but that is beyond the scope of this comment!
 
@@ -383,8 +383,8 @@ void loop() {
       //if (currentMillis - p_time_Millis >= (millis_interval/3) ) 
       if (currentMillis - p_time_Millis >= (millis_interval/5) ) {
         //UI_Leds &= ~(0b0000000011000000);  //toggle the seconds seperator bits
-        UI_Leds &= ~(0b0000000011001100);  //toggle the all the seperator bits
-        LEDdisplay.writeDigitRaw(6, UI_Leds); 
+        //UI_Leds &= ~(0b0000000011001100);  //toggle the all the seperator bits
+        //LEDdisplay.writeDigitRaw(6, UI_Leds); 
         LEDdisplay.writeDisplay();
   //      p_time_Millis = currentMillis;  // this is only the 1/2 way point, reset this below
       }
@@ -396,10 +396,11 @@ void loop() {
         sprintf(_str_buffer, "%02d%02d%02d", timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
         LEDdisplay.FillTextBuffer(_str_buffer);
 
-        UI_Leds |= 0b0000000011001100;  //Turn on the time seperator bits;
-        LEDdisplay.writeDigitRaw(6, UI_Leds); 
+        //UI_Leds |= 0b0000000011001100;  //Turn on the time seperator bits;
+        //LEDdisplay.writeDigitRaw(6, UI_Leds); 
         LEDdisplay.writeDisplay();
-
+        //#esp_deep_sleep_start
+        //#https://randomnerdtutorials.com/esp32-deep-sleep-arduino-ide-wake-up-sources/
         p_time_Millis = currentMillis;
       }    
     }else if(DeviceMode == 2){
